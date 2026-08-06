@@ -1,0 +1,7 @@
+{
+  "requestId": "setup",
+  "minimum": 1,
+  "maximum": 100,
+  "count": 1,
+  "memo": "Initial Chat PowerShell bridge setup"
+}
