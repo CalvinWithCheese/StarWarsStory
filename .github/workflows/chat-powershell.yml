@@ -1,0 +1,70 @@
+name: Chat PowerShell Bridge
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - chat-request.json
+
+permissions:
+  contents: write
+
+jobs:
+  run-random-number:
+    runs-on: windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Run random_number.ps1
+        shell: pwsh
+        run: |
+          $request = Get-Content -LiteralPath "chat-request.json" -Raw | ConvertFrom-Json
+          $resultPath = "chat-result.json"
+          $logPath = "random_number.log"
+
+          Remove-Item -LiteralPath $logPath -ErrorAction SilentlyContinue
+
+          try {
+              & ./random_number.ps1 `
+                  -Minimum ([int]$request.minimum) `
+                  -Maximum ([int]$request.maximum) `
+                  -Count ([int]$request.count) `
+                  -Memo ([string]$request.memo) `
+                  -NonInteractive
+
+              $logText = (Get-Content -LiteralPath $logPath -Raw).Trim()
+
+              $result = [ordered]@{
+                  requestId = [string]$request.requestId
+                  status = "success"
+                  minimum = [int]$request.minimum
+                  maximum = [int]$request.maximum
+                  count = [int]$request.count
+                  memo = [string]$request.memo
+                  log = $logText
+              }
+          }
+          catch {
+              $result = [ordered]@{
+                  requestId = [string]$request.requestId
+                  status = "error"
+                  message = ($_ | Out-String).Trim()
+              }
+          }
+
+          $result | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $resultPath -Encoding utf8
+
+      - name: Save result for ChatGPT
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- chat-result.json
+
+          if (git status --porcelain -- chat-result.json) {
+              git commit -m "Save Chat PowerShell result"
+              git push
+          }
