@@ -1,0 +1,9 @@
+{
+  "requestId": "setup",
+  "status": "success",
+  "minimum": 1,
+  "maximum": 100,
+  "count": 1,
+  "memo": "Initial Chat PowerShell bridge setup",
+  "log": "[2026-08-06T23:20:08.000+00:00] count=1 range=1..100 results=59\r\nmemo: Initial Chat PowerShell bridge setup"
+}
