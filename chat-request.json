@@ -1,7 +1,7 @@
 {
-  "requestId": "setup",
-  "minimum": 1,
-  "maximum": 100,
-  "count": 1,
-  "memo": "Initial Chat PowerShell bridge setup"
+  "requestId": "20260806-1946-3x4to9",
+  "minimum": 4,
+  "maximum": 9,
+  "count": 3,
+  "memo": "Chat request: generate three random numbers from 4 to 9"
 }
