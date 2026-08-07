@@ -25,9 +25,14 @@ jobs:
           $resultPath = "chat-result.json"
           $logPath = "random_number.log"
 
-          Remove-Item -LiteralPath $logPath -ErrorAction SilentlyContinue
-
           try {
+              $logLengthBefore = if (Test-Path -LiteralPath $logPath) {
+                  (Get-Item -LiteralPath $logPath).Length
+              }
+              else {
+                  0
+              }
+
               & ./random_number.ps1 `
                   -Minimum ([int]$request.minimum) `
                   -Maximum ([int]$request.maximum) `
@@ -35,7 +40,8 @@ jobs:
                   -Memo ([string]$request.memo) `
                   -NonInteractive
 
-              $logText = (Get-Content -LiteralPath $logPath -Raw).Trim()
+              $logText = Get-Content -LiteralPath $logPath -Raw
+              $newLogText = $logText.Substring([int]$logLengthBefore).Trim()
 
               $result = [ordered]@{
                   requestId = [string]$request.requestId
@@ -44,7 +50,7 @@ jobs:
                   maximum = [int]$request.maximum
                   count = [int]$request.count
                   memo = [string]$request.memo
-                  log = $logText
+                  log = $newLogText
               }
           }
           catch {
@@ -62,9 +68,9 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- chat-result.json
+          git add -- chat-result.json random_number.log
 
-          if (git status --porcelain -- chat-result.json) {
+          if (git status --porcelain -- chat-result.json random_number.log) {
               git commit -m "Save Chat PowerShell result"
               git push
           }
