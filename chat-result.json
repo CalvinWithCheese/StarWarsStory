@@ -1,9 +1,9 @@
 {
-  "requestId": "20260807-0357-1d100",
+  "requestId": "20260807-logfix-test-42",
   "status": "success",
-  "minimum": 1,
-  "maximum": 100,
+  "minimum": 42,
+  "maximum": 42,
   "count": 1,
   "memo": "",
-  "log": "[2026-08-07T07:58:07.622+00:00] count=1 range=1..100 results=77"
+  "log": "[2026-08-07T08:01:55.702+00:00] count=1 range=42..42 results=42"
 }
